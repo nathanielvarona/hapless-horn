@@ -6,28 +6,38 @@ volumes:
   vendor:
 
 services:
-  nginx:
-    image: nginx:stable-alpine
-    ports:
-      - "8080:80"
-    volumes:
-      - ./src:/var/www
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - vendor:/var/www/vendor
-    depends_on:
-      - php
-      - mysql
-      - redis
+  # nginx:
+  #   image: nginx:stable-alpine
+  #   ports:
+  #     - "8080:80"
+  #   volumes:
+  #     - ./src:/var/www
+  #     - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+  #     - vendor:/var/www/vendor
+  #   depends_on:
+  #     - php
+  #     - mysql
+  #     - redis
 
-  php:
+  # php:
+  #   build:
+  #     context: .
+  #     dockerfile:  docker-compose.php-fpm.Dockerfile
+  #   volumes:
+  #     - ./src:/var/www
+  #     - vendor:/var/www/vendor
+  #   ports:
+  #     - "9000:9000"
+
+  php-apache:
     build:
       context: .
-      dockerfile:  docker-compose.Dockerfile
+      dockerfile:  docker-compose.php-apache.Dockerfile
     volumes:
       - ./src:/var/www
       - vendor:/var/www/vendor
     ports:
-      - "9000:9000"
+      - "8080:80"
 
   mysql:
     image: mysql:8
