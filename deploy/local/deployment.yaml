@@ -1,0 +1,36 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: hapless-horn-web
+  labels:
+    app: hapless-horn-web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      pod: hapless-horn-web
+  template:
+    metadata:
+      labels:
+        pod: hapless-horn-web
+    spec:
+      containers:
+        - name: hapless-horn-web
+          image: hapless-horn:php-apache-v3
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 80
+            protocol: TCP
+          resources:
+            limits:
+              cpu: 800m
+              memory: 800Mi
+            requests:
+              cpu: 100m
+              memory: 300Mi
+          envFrom:
+          - secretRef:
+              name: env-secrets
+
+
+
