@@ -1,0 +1,72 @@
+# Multi Container in a Single Pod with initContainers command
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hapless-horn-web
+  labels:
+    app: hapless-horn-web
+spec:
+  selector:
+    matchLabels:
+      pod: hapless-horn-web
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        pod: hapless-horn-web
+    spec:
+      volumes:
+      - name: app-code
+        emptyDir: {}
+      - name: nginx-site-config
+        configMap:
+          name: nginx-site-config
+          items:
+            - key: default.conf
+              path: default.conf
+      containers:
+
+      - name: nginx
+        image: nginx:stable
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: app-code
+          mountPath: /var/www
+        - name: nginx-site-config
+          mountPath: /etc/nginx/conf.d
+        resources:
+          limits:
+            cpu: 800m
+            memory: 800Mi
+          requests:
+            cpu: 100m
+            memory: 300Mi
+
+      - name: php-fpm
+        image: hapless-horn:php-fpm-v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9000
+        resources:
+          limits:
+            cpu: 800m
+            memory: 800Mi
+          requests:
+            cpu: 100m
+            memory: 300Mi
+        envFrom:
+        - secretRef:
+            name: env-secrets
+
+      initContainers:
+      - name: setup
+        image: hapless-horn:php-fpm-v1
+        imagePullPolicy: IfNotPresent
+        command: ["/bin/bash", "-c"]
+        args: ["cp -R /var/www/. /app"]
+        volumeMounts:
+        - name: app-code
+          mountPath: /app
