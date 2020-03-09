@@ -43,3 +43,36 @@ docker rm $(docker ps -a -q) --force
 docker rmi $(docker images -q) --force
 docker volume rm $(docker volume ls -q)
 ```
+
+## Minikube Commands
+
+Creating a Minikube Profile
+```bash
+minikube start --kubernetes-version 1.14.10 --profile hapless-horn
+
+# Copy the Kube Config to Project Directory
+mv ~/.kube/config $(pwd)/kubeconfig.yaml
+```
+
+Starting a Minikube Profile
+```bash
+minikube profile hapless-horn
+export KUBECONFIG=$(pwd)/kubeconfig.yaml
+minikube start
+eval $(minikube docker-env)
+
+# Make sure `kubectl` and `docker` cli works well and connected to Minikube VM
+docker version
+kubectl version
+```
+
+## Docker build
+
+```bash
+docker build -t hapless-horn:php-apache-v1 -f kubernetes-php-apache.Dockerfile .
+docker build -t hapless-horn:php-fpm-v1 -f kubernetes-php-fpm.Dockerfile .
+
+# Creating a New Version of Docker Image
+docker build -t hapless-horn:php-apache-v2 -f kubernetes-php-apache.Dockerfile .
+docker build -t hapless-horn:php-fpm-v2 -f kubernetes-php-fpm.Dockerfile .
+```
