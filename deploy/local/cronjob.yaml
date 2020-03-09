@@ -1,0 +1,20 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: migration-status
+spec:
+  schedule: "* * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: migration-status
+              image: hapless-horn:latest
+              imagePullPolicy: IfNotPresent
+              command: ['php', 'artisan', 'migrate:status']
+              envFrom:
+              - secretRef:
+                  name: env-secrets
+          restartPolicy: OnFailure
+      backoffLimit: 1

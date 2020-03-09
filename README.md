@@ -94,3 +94,9 @@ kubectl rollout undo deployment hapless-horn-web --to-revision=4
 # Showing Revision History for a Deployment
 kubectl rollout history deployment hapless-horn-web
 ```
+
+## Jobs and Cronjobs
+```bash
+kubectl apply -f ./deploy/local/job.yaml
+kubectl apply -f ./deploy/local/cronjob.yaml
+```

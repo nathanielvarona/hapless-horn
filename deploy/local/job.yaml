@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migration
+spec:
+  template:
+    spec:
+      containers:
+        - name: migration-status
+          image: hapless-horn:php-apache-v5
+          imagePullPolicy: IfNotPresent
+          command: ['php', 'artisan', 'migrate']
+          envFrom:
+          - secretRef:
+              name: env-secrets
+      restartPolicy: OnFailure
+  backoffLimit: 1
