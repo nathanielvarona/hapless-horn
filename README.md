@@ -76,3 +76,21 @@ docker build -t hapless-horn:php-fpm-v1 -f kubernetes-php-fpm.Dockerfile .
 docker build -t hapless-horn:php-apache-v2 -f kubernetes-php-apache.Dockerfile .
 docker build -t hapless-horn:php-fpm-v2 -f kubernetes-php-fpm.Dockerfile .
 ```
+
+## Rolling Updates
+
+```bash
+kubectl apply -f ./deploy/local/deployment-method-1.yaml # v1
+kubectl apply -f ./deploy/local/deployment-method-2.yaml # v2
+kubectl apply -f ./deploy/local/deployment-method-3.yaml # v3
+
+kubectl set image deploy/hapless-horn-web hapless-horn-web=hapless-horn:php-fpm-v3 --record=true # v4
+
+kubectl set image deploy/hapless-horn-web hapless-horn-web=hapless-horn:php-fpm-v4 --record=true # v5
+
+# Undo a deployment for Revsion v3 using docker image hapless-horn:php-fpm-v3
+kubectl rollout undo deployment hapless-horn-web --to-revision=4
+
+# Showing Revision History for a Deployment
+kubectl rollout history deployment hapless-horn-web
+```
